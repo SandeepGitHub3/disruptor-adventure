@@ -5,6 +5,9 @@ public class Message {
 	private int messageNumber;
 	private boolean isProcessed;
 	
+	public Message() {
+	}
+
 	public Message(MessageType type,int messageNumber) {
 		super();
 		this.type = type;
@@ -15,7 +18,7 @@ public class Message {
 	public String toString() {
 		String messageDescription=type.name()+messageNumber;
 		if(isProcessed)
-			messageDescription=messageDescription.concat("Processed");
+			messageDescription=messageDescription.concat("P");
 		return messageDescription;
 	}
 
@@ -25,6 +28,14 @@ public class Message {
 
 	public void setProcessed(boolean isProcessed) {
 		this.isProcessed = isProcessed;
+	}
+
+	public void setType(MessageType type) {
+		this.type = type;
+	}
+
+	public void setMessageNumber(int messageNumber) {
+		this.messageNumber = messageNumber;
 	}
 
 }

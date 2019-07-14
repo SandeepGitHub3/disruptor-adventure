@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.time.StopWatch;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -34,12 +35,23 @@ public class Dispatcher implements Runnable {
 
 	@Override
 	public void run() {
+		StopWatch watch = new StopWatch();
+		watch.start();
 		while (true) {
 			try {
 				Message message = queue.take();
 				if (!consumerMap.containsKey(message.getType())) {
 					LOG.error("Drop Message:{}.No Consumer Found", message);
 				} else {
+					if (result.size() == 500) {
+						watch.stop();
+						LOG.info("Result:{}", result);
+						LOG.info("TimeTaken:{}", watch.getTime());
+						Thread.sleep(3*1000);
+						result.clear();
+						watch.reset();
+						watch.start();
+					}
 					consumerMap.get(message.getType()).consume(message);
 					result.add(message);
 				}

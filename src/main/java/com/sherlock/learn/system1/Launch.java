@@ -17,22 +17,28 @@ public class Launch {
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
 		/*Using Blocking Queue since it is specifically design for Producer consumer pattern*/
-		BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(5);
+		BlockingQueue<Message> messageQueue = new LinkedBlockingQueue<>(50000);
 
-		Thread producerThreadA = new Thread(new Producer(MessageType.A, messageQueue, 2), "ProducerA");
-		Thread producerThreadB = new Thread(new Producer(MessageType.B, messageQueue, 2), "ProducerB");
-		Thread producerThreadC = new Thread(new Producer(MessageType.C, messageQueue, 2), "ProducerC");
-		Thread producerThreadD = new Thread(new Producer(MessageType.D, messageQueue, 3), "ProducerC");
+		Thread producerThreadA = new Thread(new Producer(MessageType.A, messageQueue, 1000), "ProducerA");
+		Thread producerThreadB = new Thread(new Producer(MessageType.B, messageQueue, 1000), "ProducerB");
+		Thread producerThreadC = new Thread(new Producer(MessageType.C, messageQueue, 1000), "ProducerC");
+		Thread producerThreadD = new Thread(new Producer(MessageType.D, messageQueue, 1000), "ProducerD");
 		Dispatcher dispatcher = new Dispatcher(messageQueue);
 		Thread dispatcherThread = new Thread(dispatcher, "Dispatcher");
 		producerThreadA.start();
 		producerThreadB.start();
 		producerThreadC.start();
 		producerThreadD.start();
+		
+		producerThreadA.join();
+		producerThreadB.join();
+		producerThreadC.join();
+		producerThreadD.join();
+		
 		dispatcherThread.start();
 
-		// Let the simulation run for, say, 5 seconds
-        Thread.sleep(5 * 1000);
+		// Let the simulation run for, 50 seconds
+        Thread.sleep(50 * 1000);
 		LOG.info("Result Set:{}",dispatcher.getResult());
 		
 		 // End of simulation - shut down gracefully
